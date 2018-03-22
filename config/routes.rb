@@ -9,4 +9,5 @@ ThemeCreator::Engine.routes.draw do
   post ":id/colors" => "theme_creator#create_color_scheme"
   put ":id/colors/:color_scheme_id" => "theme_creator#update_color_scheme"
   delete ":id/colors/:color_scheme_id" => "theme_creator#destroy_color_scheme"
+  get "enter_sandbox/:token/:theme_key" => "theme_creator#enter_sandbox"
 end

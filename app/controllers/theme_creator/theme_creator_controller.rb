@@ -1,10 +1,11 @@
 class ThemeCreator::ThemeCreatorController < ApplicationController
 
-  before_action :ensure_logged_in, except: [:preview, :share_preview, :share_info]
+  before_action :ensure_logged_in, except: [:preview, :share_preview, :share_info, :enter_sandbox]
 
   before_action :ensure_own_theme, only: [:destroy, :update, :create_color_scheme, :update_color_scheme, :destroy_color_scheme]
   before_action :ensure_can_see_theme, only: [:share_preview, :share_info]
-  skip_before_action :check_xhr, only: [:preview, :share_preview]
+  skip_before_action :check_xhr, only: [:preview, :share_preview, :enter_sandbox]
+  skip_before_action :redirect_to_main_hostname_if_required, only: :enter_sandbox
 
   # Preview is used when actively developing a theme, it uses the GET parameter ?preview_theme_key
   def preview
@@ -17,12 +18,40 @@ class ThemeCreator::ThemeCreatorController < ApplicationController
 
   # Shared preview is used when sharing the theme with others. It is only accessible via POST to avoid
   # hotlinking (reduce XSS risk)
+  # This will generate an anonymous user, then send them to the sandboxed domain with a magic link
   def share_preview
     @theme ||= Theme.find(params[:id])
     raise Discourse::InvalidAccess.new() if !guardian.can_see_user_theme?(@theme)
 
-    destination = '/styleguide/' if defined? DiscourseStyleguide else '/'
-    redirect_to path(destination), flash: { user_theme_key: @theme.key }
+    user = AnonymousShadowCreator.get(current_user)
+    if user
+      email_token = user.email_tokens.create(email: user.email)
+      destination = "http://#{SiteSetting.theme_creator_sandbox_hostname}/user_themes/enter_sandbox/#{email_token.token}/#{@theme.key}"
+
+      redirect_to destination
+    else
+      raise Discourse::InvalidAccess.new()
+    end
+  end
+
+  def enter_sandbox
+    raise Discourse::InvalidAccess.new unless request.host_with_port == SiteSetting.theme_creator_sandbox_hostname
+
+    token = params[:token]
+    valid_token = !!EmailToken.valid_token_format?(token)
+
+    if ( user = EmailToken.confirm(token) ) && user.anonymous?
+      log_on_user(user)
+      theme_key = params[:theme_key]
+
+      @theme ||= Theme.find_by(key: theme_key)
+      raise Discourse::InvalidAccess.new() if !guardian.can_see_user_theme?(@theme)
+
+      destination = defined?(DiscourseStyleguide) ? '/styleguide/' : '/'
+      redirect_to path(destination), flash: { user_theme_key: @theme.key }
+    else
+      raise Discourse::InvalidAccess.new
+    end
   end
 
   def share_info

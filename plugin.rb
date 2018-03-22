@@ -86,7 +86,8 @@ after_initialize do
         def handle_theme
           super()
           user_theme_key = flash[:user_theme_key]
-          if user_theme_key && 
+          if request.host_with_port == SiteSetting.theme_creator_sandbox_hostname &&
+             user_theme_key &&
              Theme.theme_keys.include?(user_theme_key) && # Has requested a valid theme
              guardian.can_see_user_theme?(Theme.find_by(key: user_theme_key))
                 @theme_key = request.env[:resolved_theme_key] = user_theme_key
@@ -97,6 +98,42 @@ after_initialize do
     end
   end
 
+  reloadable_patch do |plugin|
+    
+    ## Only allow anonymous users on the sandbox domain
+    ## do not allow anonymous users on main domain
+    class ThemeCreatorCurrentUserProvider < Auth::DefaultCurrentUserProvider
+      def current_user
+        current_user = super
+        return current_user if !current_user
+
+        is_anonymous = current_user.anonymous?
+
+        if @env["HTTP_HOST"] == SiteSetting.theme_creator_sandbox_hostname
+          # In the sandbox, we only allow anonymous users
+          current_user = nil if !is_anonymous
+        else
+          # Outside the sandbox, we don't allow anonymous users
+          current_user = nil if is_anonymous
+        end
+
+        @env[CURRENT_USER_KEY] = current_user
+      end
+    end
+    Discourse.current_user_provider = ThemeCreatorCurrentUserProvider
+
+    # Redirect not-logged-in users to main domain
+    class ::ApplicationController
+      before_action :redirect_to_main_hostname_if_required
+
+      def redirect_to_main_hostname_if_required
+        # Redirect any anon users to the non-sandbox domain
+        if !current_user && request.host_with_port == SiteSetting.theme_creator_sandbox_hostname
+          redirect_to Discourse.base_url
+        end
+      end
+    end
+  end
 
 end
 
