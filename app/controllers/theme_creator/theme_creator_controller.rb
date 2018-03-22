@@ -1,11 +1,10 @@
 class ThemeCreator::ThemeCreatorController < ApplicationController
 
-  before_action :ensure_logged_in, except: [:preview, :share_preview, :share_info, :enter_sandbox]
+  before_action :ensure_logged_in, except: [:preview, :enter_sandbox]
 
   before_action :ensure_own_theme, only: [:destroy, :update, :create_color_scheme, :update_color_scheme, :destroy_color_scheme]
   before_action :ensure_can_see_theme, only: [:share_preview, :share_info]
   skip_before_action :check_xhr, only: [:preview, :share_preview, :enter_sandbox]
-  skip_before_action :redirect_to_main_hostname_if_required, only: :enter_sandbox
 
   # Preview is used when actively developing a theme, it uses the GET parameter ?preview_theme_key
   def preview
