@@ -23,8 +23,8 @@ en:
       
       color_scheme: "Color Scheme"
       color_scheme_belongs_to: "Color scheme for"
-      edit_color_scheme: "Edit"
-      delete_color_scheme: "Delete"
+      edit_color_scheme: "Edit color scheme"
+      delete_color_scheme: "Delete color scheme"
       add_color_scheme: "Add Color Scheme"
       adding_color_scheme: "Adding Color Scheme..."
 
@@ -37,7 +37,7 @@ en:
       
       uploads: "Uploads"
       no_uploads: "You can upload assets associated with your theme such as fonts and images"
-      new_upload: "New"
+      new_upload: "New Asset"
       
       share_theme: "Share Theme"
       start_sharing: "Start Sharing Theme"

@@ -40,12 +40,11 @@
           {{d-button action="cancelChangeScheme" class="btn-small cancel-edit" icon="times"}}
        {{else}}
        
-        {{#link-to 'user.themes.colors' model.id model.color_scheme_id class="btn" disabled=colorSchemeEditDisabled}}
+        {{#link-to 'user.themes.colors' model.id model.color_scheme_id class="btn no-text" title=(i18n "theme_creator.edit_color_scheme") disabled=colorSchemeEditDisabled}}
           {{d-icon 'pencil'}}
-          {{i18n 'theme_creator.edit_color_scheme'}}
         {{/link-to}}
 
-        {{d-button action="destroyColorScheme" label="theme_creator.delete_color_scheme" icon="trash" class="btn-danger" disabled=colorSchemeEditDisabled}}
+        {{d-button action="destroyColorScheme" title="theme_creator.delete_color_scheme" icon="trash" class="btn" disabled=colorSchemeEditDisabled}}
       {{/if}}
       </p>
       <p>
@@ -76,7 +75,10 @@
         {{#d-button action="checkForThemeUpdates" icon="refresh"}}{{i18n "admin.customize.theme.check_for_updates"}}{{/d-button}}
         {{/if}}
       {{/if}}
-      {{#d-button action="editTheme" class="btn edit"}}{{i18n 'admin.customize.theme.edit_css_html'}}{{/d-button}}
+      {{#d-button action="editTheme" class="btn edit btn-icon-text"}}
+        {{d-icon "pencil"}}
+        {{i18n 'admin.customize.theme.edit_css_html'}}
+      {{/d-button}}
       {{#if model.remote_theme}}
         <span class='status-message'>
           {{#if updatingRemote}}
@@ -124,10 +126,11 @@
 
   <hr/>
 
+  {{d-button action="shareModal" label="theme_creator.share" icon="users" class="btn btn-primary"}}
+
   <a href='{{previewUrl}}' title="{{i18n 'theme_creator.explain_preview'}}" target='_blank' class='btn'>{{d-icon 'desktop'}}{{i18n 'theme_creator.preview'}}</a>
 
+  {{d-button action="editLocalModal" icon="pencil" label="theme_creator.edit_local"}}
 
-  {{d-button action="shareModal" label="theme_creator.share" icon="users" class="btn"}}
-
-  {{d-button action="destroy" label="theme_creator.delete" icon="trash" class="btn-danger"}}
+  {{d-button action="destroy" label="theme_creator.delete" icon="trash" class="btn"}}
 </div>
