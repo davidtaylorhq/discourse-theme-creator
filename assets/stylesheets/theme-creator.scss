@@ -9,6 +9,18 @@
   .theme-details {
     flex-grow: 1;
     margin-left: 20px;
+
+    .theme-content {
+
+      & > h3 {
+        margin-top: 30px;
+        margin-bottom: 10px;
+
+        &:first-of-type{
+          margin-top: 10px;
+        }
+      }
+    }
   }
 
   // ACE Editor Sizing
@@ -57,14 +69,6 @@
     }
   }
 
-  // Indent on theme-show view
-  .theme-content {
-    margin-left: 20px;
-
-    .preview-url{
-      width: 300px;
-    }
-  }
 }
 
 #theme-creator-view-modal{
