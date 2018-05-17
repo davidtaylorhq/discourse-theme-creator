@@ -1,0 +1,22 @@
+{{#if colors.length}}
+  <table class="table colors">
+    <tbody>
+    {{#each colors as |c|}}
+      <tr class="{{if c.changed 'changed'}} {{if c.valid 'valid' 'invalid'}}">
+        <td class="name" title={{c.name}}>
+          <b>{{c.translatedName}}</b>
+          <br/>
+          <span class="description">{{c.description}}</span>
+        </td>
+        <td class="hex">{{color-input hexValue=c.hex brightnessValue=c.brightness valid=c.valid}}</td>
+        <td class="actions">
+            <button class="btn revert {{unless c.savedIsOverriden 'invisible'}}" {{action "revert" c}}>{{i18n 'revert'}}</button>
+            <button class="btn undo {{unless c.changed 'invisible'}}" {{action "undo" c}}>{{i18n 'undo'}}</button>
+        </td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>{{i18n 'search.no_results'}}</p>
+{{/if}}

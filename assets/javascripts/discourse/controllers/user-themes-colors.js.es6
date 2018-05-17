@@ -10,14 +10,6 @@ export default Ember.Controller.extend({
   },
 
   actions:{
-    revert(color) {
-      color.revert();
-    },
-
-    undo(color) {
-      color.undo();
-    },
-
     save(){
       this.set('isSaving', true);
       this.get('model').save().then(()=>{

@@ -20,6 +20,9 @@ en:
       select_a_theme: "Select or create a theme to get started!"
       delete_confirm: "Are you sure you want to delete this theme?"
       save: "Save"
+      save_quick_color_scheme: "Save"
+
+      show_advanced: "Advanced"
       
       color_scheme: "Color Scheme"
       color_scheme_belongs_to: "Color scheme for"

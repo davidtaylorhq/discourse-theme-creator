@@ -21,6 +21,8 @@ export default Ember.Route.extend({
     colorSchemes.unshift(parentController.get('model.colorSchemes').findBy('id', null));
     controller.set("colorSchemes", colorSchemes);
     controller.set("colorSchemeId", model.get('color_scheme_id'));
+
+    controller.set('advancedOverride', false);
   },
 
 });
